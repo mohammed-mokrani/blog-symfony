@@ -88,21 +88,21 @@ class BlogController extends AbstractController
      * @Route("/blog/{id}", name="blog_show")
      */
     public function show(Article $article,Request $request,EntityManagerInterface $manager){ //grace au param converteur
-
-
-        $comment = new Comment();
         //$repo = $this->getDoctrine()->getRepository(Article::class);
         //$article = $repo->find($id);
+
+        $comment = new Comment();
         $form= $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $comment->setCreatedAt(new \DateTime())
-                    ->setArticle($article);
-                    
-            $form->handleRequest($request);
+            $comment ->setCreatedAt(new \DateTime())
+                     ->setArticle($article);
+
+            
             $manager->persist($comment);
             $manager->flush();
-            return $this->redirectToRoute('Blog_show', ['id' => $article->getId()]);
+            return $this->redirectToRoute('blog_show', ['id' => $article->getId()]);
             
         }
 
